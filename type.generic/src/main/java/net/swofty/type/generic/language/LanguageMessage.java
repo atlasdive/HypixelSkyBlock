@@ -4,24 +4,16 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
 
 public enum LanguageMessage {
-    CURRENT_LANGUAGE_KEY("language.current"),
-    AVAILABLE_LANGUAGES_KEY("language.available"),
-    USE_LANGUAGE_HINT_KEY("language.hint.use_command"),
-    UNKNOWN_LANGUAGE_KEY("language.error.unknown"),
-    LANGUAGE_UPDATED_KEY("language.updated");
-
-    // Legacy string constants kept for compatibility with code using the previous API shape.
-    public static final String CURRENT_LANGUAGE = CURRENT_LANGUAGE_KEY.key();
-    public static final String AVAILABLE_LANGUAGES = AVAILABLE_LANGUAGES_KEY.key();
-    public static final String USE_LANGUAGE_HINT = USE_LANGUAGE_HINT_KEY.key();
-    public static final String UNKNOWN_LANGUAGE = UNKNOWN_LANGUAGE_KEY.key();
-    public static final String LANGUAGE_UPDATED = LANGUAGE_UPDATED_KEY.key();
+    CURRENT_LANGUAGE("language.current"),
+    AVAILABLE_LANGUAGES("language.available"),
+    USE_LANGUAGE_HINT("language.hint.use_command"),
+    UNKNOWN_LANGUAGE("language.error.unknown"),
+    LANGUAGE_UPDATED("language.updated");
 
     private static final Map<PlayerLanguage, Map<String, String>> MESSAGES = new EnumMap<>(PlayerLanguage.class);
     private static final LanguageAdventureTranslator ADVENTURE_TRANSLATOR = new LanguageAdventureTranslator();
@@ -44,15 +36,11 @@ public enum LanguageMessage {
     }
 
     public String format(PlayerLanguage language, Object... args) {
-        return formatByCode(key, language, args);
+        return String.format(resolveTemplate(key, language), args);
     }
 
     public MessageFormat toMessageFormat(PlayerLanguage language) {
         return new MessageFormat(resolveTemplate(key, language), language.getLocale());
-    }
-
-    public static String formatByCode(String code, PlayerLanguage language, Object... args) {
-        return String.format(resolveTemplate(code, language), args);
     }
 
     static String resolveTemplate(String key, Locale locale) {
@@ -63,7 +51,7 @@ public enum LanguageMessage {
         return resolveTemplate(key, language);
     }
 
-    static String resolveTemplate(String key, PlayerLanguage language) {
+    private static String resolveTemplate(String key, PlayerLanguage language) {
         Map<String, String> localized = MESSAGES.get(language);
         if (localized != null && localized.containsKey(key)) {
             return localized.get(key);
@@ -75,13 +63,6 @@ public enum LanguageMessage {
         }
 
         return key;
-    }
-
-    public static LanguageMessage fromCode(String code) {
-        return Arrays.stream(values())
-                .filter(message -> message.key.equals(code))
-                .findFirst()
-                .orElse(null);
     }
 
     public static LanguageAdventureTranslator adventureTranslator() {

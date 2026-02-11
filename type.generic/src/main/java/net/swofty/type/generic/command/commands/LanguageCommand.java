@@ -35,7 +35,7 @@ public class LanguageCommand extends HypixelCommand {
             PlayerLanguage language = PlayerLanguage.fromInput(rawLanguage);
 
             if (language == null) {
-                sender.sendMessage(LanguageMessage.UNKNOWN_LANGUAGE_KEY.format(
+                sender.sendMessage(LanguageMessage.UNKNOWN_LANGUAGE.format(
                         PlayerLanguage.ENGLISH,
                         rawLanguage,
                         PlayerLanguage.allLanguageIds()));
@@ -43,7 +43,7 @@ public class LanguageCommand extends HypixelCommand {
             }
 
             PlayerLanguageService.applyLanguage(player, language);
-            sender.sendMessage(LanguageMessage.LANGUAGE_UPDATED_KEY.format(language, language.getDisplayName(), language.getId()));
+            sender.sendMessage(LanguageMessage.LANGUAGE_UPDATED.format(language, language.getDisplayName(), language.getId()));
         }, languageArg);
     }
 }
